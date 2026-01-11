@@ -106,4 +106,20 @@ export class ExplosionSystem {
       return true;
     });
   }
+
+  cleanup() {
+    // Remove all active explosions from the scene
+    for (const explosion of this.explosions) {
+      this.gameScene.scene.remove(explosion.sprite);
+      if (explosion.sprite.material) {
+        if (explosion.sprite.material.map) {
+          explosion.sprite.material.map.dispose();
+        }
+        explosion.sprite.material.dispose();
+      }
+    }
+    
+    // Clear the explosions array
+    this.explosions = [];
+  }
 }
