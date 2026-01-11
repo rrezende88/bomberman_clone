@@ -500,6 +500,9 @@ export class GameScene {
       this.celebrationAnimation = null;
     }
     
+    // Clean up any lingering explosions
+    this.explosionSystem.cleanup();
+    
     // Generate stage (synchronous now)
     this.generateStage(stage.id);
     
@@ -545,6 +548,9 @@ export class GameScene {
     });
     
     this.hudSprites.forEach(sprite => this.scene.remove(sprite));
+    
+    // Clean up explosions
+    this.explosionSystem.cleanup();
   }
 
   update(deltaTime) {
