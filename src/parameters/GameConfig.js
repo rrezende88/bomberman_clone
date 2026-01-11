@@ -106,6 +106,13 @@ export const GameConfig = {
     },
   ],
   
+  // Weather effects mapping (theme -> effect type)
+  WEATHER_EFFECTS: {
+    'ice': 'snow',
+    'water': 'rain',
+    'grassland': 'flower',
+  },
+  
   // Rendering
   CAMERA_ZOOM: 1,
   CANVAS_WIDTH: 800,

@@ -10,6 +10,9 @@ import { ExplosionSystem } from '../systems/ExplosionSystem.js';
 import { AISystem } from '../systems/AISystem.js';
 import { StageLoader } from '../utils/StageLoader.js';
 import { CelebrationAnimation } from '../utils/CelebrationAnimation.js';
+import { SnowEffect } from '../effects/weather/SnowEffect.js';
+import { RainEffect } from '../effects/weather/RainEffect.js';
+import { FlowerEffect } from '../effects/weather/FlowerEffect.js';
 import { STAGES } from '../data/stages.js';
 
 export class GameScene {
@@ -51,6 +54,9 @@ export class GameScene {
     
     // Victory celebration
     this.celebrationAnimation = null;
+    
+    // Weather effects
+    this.weatherEffect = null;
     
     this.createFloor();
   }
@@ -134,6 +140,36 @@ export class GameScene {
     this.scene.add(this.floor);
   }
 
+  initializeWeatherEffect() {
+    // Clean up existing weather effect if present
+    if (this.weatherEffect) {
+      this.weatherEffect.dispose();
+      this.weatherEffect = null;
+    }
+    
+    // Check if current theme has a weather effect
+    const effectType = GameConfig.WEATHER_EFFECTS[this.currentTheme];
+    
+    if (!effectType) {
+      return; // No weather effect for this theme
+    }
+    
+    // Create appropriate weather effect
+    switch (effectType) {
+      case 'snow':
+        this.weatherEffect = new SnowEffect(this.scene);
+        break;
+      case 'rain':
+        this.weatherEffect = new RainEffect(this.scene);
+        break;
+      case 'flower':
+        this.weatherEffect = new FlowerEffect(this.scene);
+        break;
+      default:
+        console.warn(`Unknown weather effect type: ${effectType}`);
+    }
+  }
+
   generateStage(stageId) {
     // Clear existing entities
     this.walls = [];
@@ -153,6 +189,9 @@ export class GameScene {
     
     // Update floor based on theme
     this.updateFloor();
+    
+    // Initialize weather effect based on theme
+    this.initializeWeatherEffect();
     
     // Load stage data from imported constants
     try {
@@ -549,6 +588,12 @@ export class GameScene {
     
     this.hudSprites.forEach(sprite => this.scene.remove(sprite));
     
+    // Clean up weather effect
+    if (this.weatherEffect) {
+      this.weatherEffect.dispose();
+      this.weatherEffect = null;
+    }
+    
     // Clean up explosions
     this.explosionSystem.cleanup();
   }
@@ -627,6 +672,11 @@ export class GameScene {
     
     // Update explosions
     this.explosionSystem.update(deltaTime);
+    
+    // Update weather effect
+    if (this.weatherEffect) {
+      this.weatherEffect.update(deltaTime);
+    }
     
     // Check win condition (all enemies defeated)
     const aliveEnemies = this.enemies.filter(e => e.isAlive).length;
