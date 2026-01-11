@@ -14,10 +14,10 @@ export class Wall {
     this.hasPowerup = false;
     this.powerupType = null;
     
-    if (!isHard && Math.random() < 0.3) {
-      this.hasPowerup = true;
-      const types = ['bomb', 'fire', 'speed'];
-      this.powerupType = types[Math.floor(Math.random() * types.length)];
+    if (!isHard) {
+      const dropResult = game.powerupDropSystem.rollWallPowerup();
+      this.hasPowerup = dropResult.shouldDrop;
+      this.powerupType = dropResult.type;
     }
     
     this.createSprite();

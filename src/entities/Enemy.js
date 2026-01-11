@@ -204,10 +204,9 @@ export class Enemy {
     }
     
     // Drop power-up randomly
-    if (Math.random() < GameConfig.POWERUP_DROP_CHANCE) {
-      const types = ['bomb', 'fire', 'speed'];
-      const type = types[Math.floor(Math.random() * types.length)];
-      gameScene.createPowerup(this.gridX, this.gridY, type);
+    const dropResult = this.game.powerupDropSystem.rollEnemyPowerup();
+    if (dropResult.shouldDrop) {
+      gameScene.createPowerup(this.gridX, this.gridY, dropResult.type);
     }
   }
 
