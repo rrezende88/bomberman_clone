@@ -14,21 +14,24 @@ Test the latest version of the game directly in your browser - no installation r
 
 ## Features
 
-- **4 Playable Characters** - Each with unique stats and abilities
-- **2 Different Stages** - Classic Arena and Central Fortress
+- **4 Playable Characters** - Each with unique stats, HP, and special abilities
+- **12 Different Stages** - Diverse themed environments with unique layouts and mechanics
 - **Smart AI Enemies** - Three types with different behaviors (Wanderer, Chaser, Patroller)
+- **Special Floor Tiles** - Sand floors (slow movement) and Turbo pads (speed boost)
 - **Power-up System** - Increase bomb count, blast range, and movement speed
 - **Full Gamepad Support** - Native browser Gamepad API integration
-- **Pixel Art Graphics** - Retro-style procedurally generated sprites
+- **Pixel Art Graphics** - Retro-style character sprite sheets (16x16px, 3 frames, 4 directions)
 - **Chain Reactions** - Bombs trigger other bombs for massive explosions
+- **HP System** - Characters have 2-4 HP depending on their type
 - **Win Conditions** - Defeat all enemies and reach the exit door
 
 ## Technology Stack
 
-- **Three.js** - 3D graphics library for rendering 2D sprites
-- **Vite** - Fast build tool and development server
+- **Three.js (r160)** - 3D graphics library for rendering 2D sprites in orthographic view
+- **Vite** - Fast build tool and development server with hot module replacement
 - **Native Gamepad API** - Controller support without external libraries
-- **Canvas API** - Procedural pixel art generation
+- **Canvas API** - Procedural pixel art generation for tiles and entities
+- **Node.js Canvas** - Server-side sprite generation (optional, dev dependency)
 
 ## Prerequisites
 
@@ -123,8 +126,9 @@ Eliminate all enemies using bombs, collect power-ups to increase your abilities,
 
 **Player (Colored Square with Eyes)**
 - Navigate the arena and place bombs strategically
-- Avoid getting caught in explosions
+- Avoid getting caught in explosions (lose 1 HP per hit)
 - Collect power-ups to become stronger
+- Watch out for special floor tiles that affect movement speed
 
 **Enemies**
 - **Purple (Wanderer)** - Moves randomly around the arena
@@ -132,8 +136,13 @@ Eliminate all enemies using bombs, collect power-ups to increase your abilities,
 - **Cyan (Patroller)** - Follows predetermined patrol routes
 
 **Walls**
-- **Gray Brick Walls** - Indestructible obstacles
-- **Brown Crate Walls** - Destructible, may contain power-ups
+- **Gray Brick Walls (#)** - Indestructible hard walls that form the grid pattern
+- **Brown Crate Walls (*)** - Destructible soft walls, 30% chance to drop power-ups
+
+**Special Floor Tiles**
+- **Sand Floors (S)** - Tan colored, reduces movement speed by 50%
+- **Turbo Pads (T)** - Bright colored, increases movement speed by 50%
+- Green Bomber and Patroller enemies are immune to slowdown effects
 
 **Bombs**
 - 3-second fuse timer before explosion
@@ -157,22 +166,32 @@ Power-ups spawn from:
 
 Each character has unique starting stats:
 
-1. **Red Bomber** - Balanced (Speed: 2.5, Bombs: 1)
-2. **Blue Bomber** - Fast (Speed: 3.0, Bombs: 1)
-3. **Green Bomber** - Bomber (Speed: 2.0, Bombs: 2)
-4. **Yellow Bomber** - Balanced (Speed: 2.5, Bombs: 1)
+1. **Red Bomber** - Balanced (Speed: 2.5, Bombs: 1, HP: 3)
+2. **Blue Bomber** - Fast (Speed: 3.0, Bombs: 1, HP: 2) - Glass cannon
+3. **Green Bomber** - Bomber (Speed: 2.0, Bombs: 2, HP: 3) - Immune to slowdown effects
+4. **Yellow Bomber** - Tank (Speed: 2.0, Bombs: 1, HP: 4) - Most durable
 
 ### Stages
 
-**Classic Arena**
-- Traditional Bomberman grid layout
-- Regular pattern of indestructible walls
-- Moderate amount of destructible walls
+The game features 12 unique stages with different themes and layouts:
 
-**Central Fortress**
-- Large fortress structure in the center
-- Corner obstacles for strategic positioning
-- More open space for movement
+1. **Classic Arena** - Traditional Bomberman grid layout
+2. **Grassland Fields** - Green meadows and fresh air
+3. **Desert Dunes** - Hot sandy wasteland with slowdown tiles
+4. **Sunny Beach** - Tropical paradise
+5. **City Roads** - Urban asphalt jungle with turbo pads
+6. **Water World** - Deep blue waters
+7. **Dark Forest** - Mysterious woods with dense obstacles
+8. **Toxic Zone** - Poisonous hazard area with heavy walls
+9. **Frozen Tundra** - Icy cold wasteland
+10. **Power Plant** - Industrial energy facility with grouped blocks
+11. **Midnight Manor** - Dark night realm with patterned walls
+12. **Dungeon Fortress** - Dark dungeon with narrow corridors and central fortress
+
+**Special Tiles:**
+- **Sand Floors (S)** - Reduce movement speed by 50% (Desert stage)
+- **Turbo Pads (T)** - Increase movement speed by 50% (City Roads stage)
+- Some characters are immune to slowdown effects (Green Bomber, Patroller enemies)
 
 ### Winning and Losing
 
@@ -195,38 +214,55 @@ Each character has unique starting stats:
 ```
 bomberman_clone/
 ├── src/
-│   ├── main.js                      # Game initialization and main loop
-│   ├── entities/                    # Game objects
-│   │   ├── Player.js               # Player character logic
-│   │   ├── Enemy.js                # Enemy AI and behavior
-│   │   ├── Bomb.js                 # Bomb mechanics and explosions
-│   │   ├── Wall.js                 # Wall types and destruction
-│   │   └── Powerup.js              # Power-up collection
-│   ├── scenes/                      # Game states
-│   │   ├── MainMenuScene.js        # Main menu UI
-│   │   ├── CharacterSelectScene.js # Character selection
-│   │   ├── StageSelectScene.js     # Stage selection
-│   │   └── GameScene.js            # Main gameplay
-│   ├── systems/                     # Game systems
-│   │   ├── InputManager.js         # Keyboard + Gamepad input
-│   │   ├── CollisionSystem.js      # Collision detection
-│   │   ├── ExplosionSystem.js      # Explosion mechanics
-│   │   └── AISystem.js             # Enemy AI coordination
-│   └── utils/                       # Utilities
-│       ├── GameConfig.js           # Game constants
-│       ├── SceneManager.js         # Scene transitions
-│       └── SpriteLoader.js         # Texture generation
-├── index.html                       # Entry HTML file
-├── package.json                     # Dependencies and scripts
-├── vite.config.js                  # Vite configuration
-└── README.md                        # This file
+│   ├── main.js                         # Game initialization and main loop
+│   ├── data/                           # Game data
+│   │   └── stages.js                   # Stage layout definitions (12 stages)
+│   ├── entities/                       # Game objects
+│   │   ├── Player.js                   # Player character logic
+│   │   ├── Enemy.js                    # Enemy AI and behavior
+│   │   ├── Bomb.js                     # Bomb mechanics and explosions
+│   │   ├── Wall.js                     # Wall types and destruction
+│   │   └── Powerup.js                  # Power-up collection
+│   ├── parameters/                     # Game configuration
+│   │   ├── GameConfig.js               # Game constants and settings
+│   │   ├── CharacterBehaviors.js       # Character stats and abilities
+│   │   ├── EnemyBehaviors.js           # Enemy types and properties
+│   │   └── TileBehaviors.js            # Floor tile properties
+│   ├── scenes/                         # Game states
+│   │   ├── MainMenuScene.js            # Main menu UI
+│   │   ├── CharacterSelectScene.js     # Character selection
+│   │   ├── StageSelectScene.js         # Stage selection
+│   │   └── GameScene.js                # Main gameplay
+│   ├── systems/                        # Game systems
+│   │   ├── InputManager.js             # Keyboard + Gamepad input
+│   │   ├── CollisionSystem.js          # Collision detection
+│   │   ├── ExplosionSystem.js          # Explosion mechanics
+│   │   └── AISystem.js                 # Enemy AI coordination
+│   └── utils/                          # Utilities
+│       ├── SceneManager.js             # Scene transitions
+│       ├── SpriteLoader.js             # Texture generation
+│       ├── StageLoader.js              # Stage parsing and loading
+│       ├── FontLoader.js               # Font loading
+│       └── CelebrationAnimation.js     # Victory effects
+├── public/
+│   └── sprites/                        # Character sprite sheets
+│       ├── player_red.png              # Red character (16x48, 4 directions)
+│       ├── player_blue.png             # Blue character
+│       ├── player_green.png            # Green character
+│       └── player_yellow.png           # Yellow character
+├── scripts/
+│   └── generate-sprites.js             # Node.js script to generate sprites
+├── index.html                          # Entry HTML file
+├── package.json                        # Dependencies and scripts
+├── vite.config.js                      # Vite configuration
+└── README.md                           # This file
 ```
 
 ## Development
 
 ### Adding New Characters
 
-Edit `src/utils/GameConfig.js` and add a new character to the `CHARACTERS` array:
+Edit `src/parameters/CharacterBehaviors.js` and add a new character to the `CHARACTERS` array:
 
 ```javascript
 { 
@@ -234,33 +270,87 @@ Edit `src/utils/GameConfig.js` and add a new character to the `CHARACTERS` array
   name: 'Purple Bomber', 
   color: 0xff00ff, 
   speed: 2.8, 
-  bombs: 1 
+  bombs: 1,
+  hp: 3,
+  immuneToSlowdown: false // Optional special ability
 }
 ```
 
 ### Adding New Stages
 
-1. Add stage metadata to `GameConfig.STAGES`
-2. Create a new generation function in `GameScene.js`
-3. Call it from `generateStage()` based on stage ID
+1. Add stage metadata to `src/parameters/GameConfig.js` in the `STAGES` array:
+```javascript
+{ 
+  id: 12, 
+  name: 'Volcano Zone',
+  description: 'Fiery volcanic arena',
+  theme: 'volcano'
+}
+```
+
+2. Create stage layout in `src/data/stages.js`:
+```javascript
+export const STAGE_13 = `#####################
+#P..*...*..*....1...#
+#.#.#.#.#.#.#.#.#.#.#
+#.*....*.*..*...*.**#
+#.#.#.#.#.#.#.#.#.#.#
+#..*.*...*.*...*.2..#
+#.#.#.#.#.#.#.#.#.#.#
+#*..*.*..*..*.*.3...#
+#.#.#.#.#.#.#.#.#.#.#
+#.*..*.*..*..*.*....#
+#####################`;
+```
+
+3. Add to STAGES array at bottom of `stages.js`:
+```javascript
+export const STAGES = [
+  STAGE_1, STAGE_2, ..., STAGE_13
+];
+```
+
+**Stage Layout Symbols:**
+- `#` = Hard wall (indestructible)
+- `*` = Soft wall (destructible, may drop power-ups)
+- `.` = Empty space
+- `P` = Player spawn point
+- `1` = Chaser enemy spawn
+- `2` = Wanderer enemy spawn
+- `3` = Patroller enemy spawn
+- `S` = Sand floor (slowdown)
+- `T` = Turbo pad (speed boost)
 
 ### Customizing Sprites
 
-All sprites are procedurally generated in `src/utils/SpriteLoader.js`. Modify the Canvas drawing code to change appearance:
+**Character Sprites:** Character sprites are pre-generated PNG files located in `public/sprites/`. To regenerate or modify them:
 
-- `createCharacterTexture()` - Player and character sprites
-- `createEnemyTexture()` - Enemy sprites
-- `createBombTexture()` - Bomb appearance
-- `createWallTexture()` - Wall types
-- `createPowerupTexture()` - Power-up icons
+1. Install the canvas dev dependency (if not already installed):
+   ```bash
+   npm install
+   ```
+2. Edit `scripts/generate-sprites.js` to modify character appearance (body color, size, animations)
+3. Run the sprite generator:
+   ```bash
+   node scripts/generate-sprites.js
+   ```
+4. Sprite format: 16x48 PNG (3 frames × 4 directions)
+   - Frames: idle, walk1, walk2
+   - Directions: down, up, right, left
+   - Each character sprite is 16x16px per frame
 
-### Asset Requirements
+**Procedural Sprites:** Other game elements are procedurally generated in `src/utils/SpriteLoader.js`:
+- `createEnemyTexture()` - Enemy sprites (purple, red, cyan)
+- `createBombTexture()` - Bomb appearance (black with countdown)
+- `createWallTexture()` - Wall types (gray brick, brown crate)
+- `createPowerupTexture()` - Power-up icons (B, F, S)
+- `createFloorTexture()` - Special floor tiles (sand, turbo)
 
-If replacing procedural sprites with actual image files:
-- Character sprites: 16x16px or 32x32px PNG
-- Tile sprites: 32x32px PNG
-- Use nearest-neighbor filtering for crisp pixels
-- Place in `src/assets/` directory structure
+**Asset Requirements:**
+- Character sprites: 16x16px per frame (16x48 sprite sheet)
+- Tile sprites: Generated at 48x48px
+- Uses nearest-neighbor filtering for crisp pixel art
+- Character PNGs must be placed in `public/sprites/` directory
 
 ## Browser Compatibility
 
@@ -301,9 +391,11 @@ If replacing procedural sprites with actual image files:
 ## Known Limitations
 
 - Single-player only (no network multiplayer)
-- Maximum 5 enemies per stage
-- No sound effects or music (can be added)
+- Fixed 5 enemies per stage (configurable in `EnemyBehaviors.js`)
+- No sound effects or music
 - Safari gamepad support is limited
+- Stage dimensions fixed at 21×11 grid
+- Character sprites must be manually regenerated if modified
 
 ## Future Enhancements
 
