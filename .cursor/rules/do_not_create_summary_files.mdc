@@ -1,0 +1,4 @@
+---
+alwaysApply: true
+---
+Never create .md files unless explicitly said.
