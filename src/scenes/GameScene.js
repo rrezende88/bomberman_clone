@@ -223,12 +223,12 @@ export class GameScene {
       });
       const mesh = new THREE.Mesh(geometry, material);
       
-      // Position the tile (centered on grid position, with same offset as walls)
-      const x = tile.x * GameConfig.TILE_SIZE - (GameConfig.GRID_WIDTH * GameConfig.TILE_SIZE) / 2 + GameConfig.TILE_SIZE / 2;
-      const y = tile.y * GameConfig.TILE_SIZE - (GameConfig.GRID_HEIGHT * GameConfig.TILE_SIZE) / 2 + GameConfig.TILE_SIZE / 2;
+      // Position the tile (convert grid position to screen position)
+      const gridX = tile.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2;
+      const gridY = tile.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2;
       
-      mesh.position.x = x;
-      mesh.position.y = y;
+      mesh.position.x = GameConfig.gridToScreen(gridX, true);
+      mesh.position.y = GameConfig.gridToScreen(gridY, false);
       mesh.position.z = -0.5; // Above floor but below entities
       
       this.scene.add(mesh);
