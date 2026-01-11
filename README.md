@@ -6,6 +6,12 @@ A classic Bomberman-style game built with Three.js, featuring pixel art graphics
 ![Three.js](https://img.shields.io/badge/three.js-r160-green)
 ![License](https://img.shields.io/badge/license-MIT-brightgreen)
 
+## 🎮 Play Online
+
+**[Play the game here!](https://rrezende88.github.io/bomberman_clone/)**
+
+Test the latest version of the game directly in your browser - no installation required!
+
 ## Features
 
 - **4 Playable Characters** - Each with unique stats and abilities
