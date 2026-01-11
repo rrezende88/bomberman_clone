@@ -139,7 +139,7 @@ export class CharacterSelectScene {
     // Load sprite sheet for the selected character
     const char = GameConfig.CHARACTERS[this.selectedCharacter];
     const colorName = char.name.split(' ')[0].toLowerCase();
-    const spritePath = `/sprites/player_${colorName}.png`;
+    const spritePath = `./sprites/player_${colorName}.png`;
     
     try {
       const spriteSheet = await this.game.spriteLoader.loadSpriteSheet(spritePath);
