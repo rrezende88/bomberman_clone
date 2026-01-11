@@ -46,6 +46,9 @@ export class GameScene {
     // HUD elements
     this.hudSprites = [];
     
+    // Special floor tiles
+    this.specialTileSprites = [];
+    
     // Victory celebration
     this.celebrationAnimation = null;
     
@@ -138,6 +141,12 @@ export class GameScene {
     this.bombs = [];
     this.powerups = [];
     
+    // Clear special tile sprites
+    for (const sprite of this.specialTileSprites) {
+      this.scene.remove(sprite);
+    }
+    this.specialTileSprites = [];
+    
     // Determine stage theme from GameConfig
     const stageConfig = GameConfig.STAGES[stageId];
     this.currentTheme = stageConfig ? stageConfig.theme : 'classic';
@@ -170,11 +179,60 @@ export class GameScene {
         this.scene.add(wall.getSprite());
       }
       
+      // Render special tiles
+      this.renderSpecialTiles();
+      
     } catch (error) {
       console.error('Failed to load stage:', error);
       // Fallback to default stage
       this.currentStageData = this.stageLoader.createDefaultStage();
       this.generateDefaultWalls();
+    }
+  }
+
+  renderSpecialTiles() {
+    // Clear existing special tile sprites
+    for (const sprite of this.specialTileSprites) {
+      this.scene.remove(sprite);
+    }
+    this.specialTileSprites = [];
+    
+    if (!this.currentStageData || !this.currentStageData.specialTiles) {
+      return;
+    }
+    
+    // Create visual representations for special tiles
+    for (const tile of this.currentStageData.specialTiles) {
+      let color;
+      
+      // Determine color based on tile type
+      switch (tile.type) {
+        case 'sandFloor':
+          color = 0xdaa520; // Golden sand color
+          break;
+        default:
+          color = 0xcccccc; // Default gray
+      }
+      
+      // Create a plane for the tile
+      const geometry = new THREE.PlaneGeometry(GameConfig.TILE_SIZE, GameConfig.TILE_SIZE);
+      const material = new THREE.MeshBasicMaterial({ 
+        color: color,
+        transparent: true,
+        opacity: 0.7
+      });
+      const mesh = new THREE.Mesh(geometry, material);
+      
+      // Position the tile (centered on grid position, with same offset as walls)
+      const x = tile.x * GameConfig.TILE_SIZE - (GameConfig.GRID_WIDTH * GameConfig.TILE_SIZE) / 2 + GameConfig.TILE_SIZE / 2;
+      const y = tile.y * GameConfig.TILE_SIZE - (GameConfig.GRID_HEIGHT * GameConfig.TILE_SIZE) / 2 + GameConfig.TILE_SIZE / 2;
+      
+      mesh.position.x = x;
+      mesh.position.y = y;
+      mesh.position.z = -0.5; // Above floor but below entities
+      
+      this.scene.add(mesh);
+      this.specialTileSprites.push(mesh);
     }
   }
 
