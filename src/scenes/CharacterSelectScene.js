@@ -6,7 +6,7 @@ export class CharacterSelectScene {
   constructor(game) {
     this.game = game;
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x1a1a1a);
+    this.scene.background = new THREE.Color(0xb0e0e6);
     
     this.selectedCharacter = 0;
     this.characterSprites = [];

@@ -4,7 +4,7 @@ export class MainMenuScene {
   constructor(game) {
     this.game = game;
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x2a2a2a);
+    this.scene.background = new THREE.Color(0xb0e0e6);
     
     this.selectedOption = 0;
     this.options = ['Start Game', 'Controls', 'Exit'];
