@@ -80,8 +80,8 @@ export class Player {
   updateSpritePosition() {
     if (this.sprite) {
       this.sprite.position.set(
-        this.x - (GameConfig.GRID_WIDTH * GameConfig.TILE_SIZE) / 2,
-        this.y - (GameConfig.GRID_HEIGHT * GameConfig.TILE_SIZE) / 2,
+        GameConfig.gridToScreen(this.x, true),
+        GameConfig.gridToScreen(this.y, false),
         1
       );
       

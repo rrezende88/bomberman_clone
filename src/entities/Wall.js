@@ -69,8 +69,11 @@ export class Wall {
     this.sprite = new THREE.Sprite(material);
     this.sprite.scale.set(GameConfig.TILE_SIZE, GameConfig.TILE_SIZE, 1);
     
-    const x = this.gridX * GameConfig.TILE_SIZE - (GameConfig.GRID_WIDTH * GameConfig.TILE_SIZE) / 2 + GameConfig.TILE_SIZE / 2;
-    const y = this.gridY * GameConfig.TILE_SIZE - (GameConfig.GRID_HEIGHT * GameConfig.TILE_SIZE) / 2 + GameConfig.TILE_SIZE / 2;
+    // Convert grid position to screen position
+    const gridX = this.gridX * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2;
+    const gridY = this.gridY * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2;
+    const x = GameConfig.gridToScreen(gridX, true);
+    const y = GameConfig.gridToScreen(gridY, false);
     
     this.sprite.position.set(x, y, 0.3);
   }

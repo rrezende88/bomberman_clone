@@ -122,4 +122,16 @@ export const GameConfig = {
   // Collision (for pixel art perspective)
   COLLISION_SIZE_MULTIPLIER: 0.5, // Tighter collision box
   COLLISION_OFFSET_Y: 0.15, // Offset down to align with feet
+  
+  /**
+   * Convert grid position to screen position
+   * Applies the centering offset to transform from grid space to screen space
+   * @param {number} gridPos - Position in grid space (already multiplied by TILE_SIZE)
+   * @param {boolean} isX - Whether this is an X coordinate (default true)
+   * @returns {number} Position in screen space
+   */
+  gridToScreen(gridPos, isX = true) {
+    const gridSize = isX ? this.GRID_WIDTH : this.GRID_HEIGHT;
+    return gridPos - (gridSize * this.TILE_SIZE) / 2;
+  }
 };
