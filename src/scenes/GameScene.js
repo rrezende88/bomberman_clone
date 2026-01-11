@@ -41,6 +41,7 @@ export class GameScene {
     this.victoryScreenTimer = 0;
     this.currentStageData = null;
     this.currentTheme = 'classic';
+    this.gameReady = false;
     
     // HUD elements
     this.hudSprites = [];
@@ -357,6 +358,7 @@ export class GameScene {
     this.allEnemiesDefeated = false;
     this.victoryDelayTimer = 0;
     this.victoryScreenTimer = 0;
+    this.gameReady = false;
     
     // Reset celebration state
     if (this.celebrationAnimation) {
@@ -373,6 +375,9 @@ export class GameScene {
     
     // Create HUD
     this.createHUD();
+    
+    // Mark game as ready after all initialization is complete
+    this.gameReady = true;
   }
 
   onExit() {
@@ -485,7 +490,7 @@ export class GameScene {
     
     // Check win condition (all enemies defeated)
     const aliveEnemies = this.enemies.filter(e => e.isAlive).length;
-    if (aliveEnemies === 0 && !this.allEnemiesDefeated) {
+    if (aliveEnemies === 0 && !this.allEnemiesDefeated && this.gameReady) {
       this.allEnemiesDefeated = true;
       this.victoryDelayTimer = 1.0; // 1 second delay before victory screen
       this.score += 1000; // Bonus for defeating all enemies

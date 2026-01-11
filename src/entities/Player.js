@@ -41,7 +41,7 @@ export class Player {
   async createSprite() {
     // Determine sprite sheet path based on character
     const colorName = this.character.name.split(' ')[0].toLowerCase(); // 'Red Bomber' -> 'red'
-    const spritePath = `/sprites/player_${colorName}.png`;
+    const spritePath = `./sprites/player_${colorName}.png`;
     
     try {
       // Load sprite sheet
