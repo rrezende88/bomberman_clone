@@ -246,7 +246,7 @@ A: Currently single-player only.
 ✅ Bomb placement and explosions
 ✅ Chain reaction mechanics
 ✅ Power-up system (3 types)
-✅ Lives and damage system
+✅ HP and damage system
 ✅ Score tracking
 ✅ Timer countdown
 ✅ Win/lose conditions

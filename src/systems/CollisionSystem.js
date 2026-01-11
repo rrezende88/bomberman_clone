@@ -1,4 +1,4 @@
-import { GameConfig } from '../utils/GameConfig.js';
+import { GameConfig } from '../parameters/GameConfig.js';
 
 export class CollisionSystem {
   constructor(gameScene) {

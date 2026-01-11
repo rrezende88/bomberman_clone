@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { GameConfig } from '../utils/GameConfig.js';
+import { GameConfig } from '../parameters/GameConfig.js';
 
 export class Player {
   constructor(game, gridX, gridY, character) {
@@ -12,7 +12,7 @@ export class Player {
     this.speed = character.speed;
     this.maxBombs = character.bombs;
     this.bombRange = GameConfig.PLAYER_BOMB_RANGE;
-    this.lives = GameConfig.PLAYER_LIVES;
+    this.hp = character.hp; // Use character-specific HP
     this.activeBombs = 0;
     
     // Movement (position at center of tile)
@@ -218,8 +218,8 @@ export class Player {
 
   /**
    * Get speed modifier based on current tile
-   * Returns speedModifier from tile properties if on a special tile, otherwise 1.0
-   * This method can be copied to Enemy.js for future implementation
+   * Returns additive speed modifier (effectiveSpeed = baseSpeed * (1 + modifier))
+   * Green Bomber is immune to negative modifiers (slowdowns)
    */
   getTileSpeedModifier(gameScene) {
     if (!gameScene.currentStageData || !gameScene.currentStageData.specialTiles) {
@@ -232,7 +232,15 @@ export class Player {
     );
     
     if (specialTile && specialTile.properties && specialTile.properties.speedModifier !== undefined) {
-      return specialTile.properties.speedModifier;
+      let modifier = specialTile.properties.speedModifier;
+      
+      // Check if character is immune to slowdown (negative modifiers)
+      if (this.character.immuneToSlowdown && modifier < 0) {
+        modifier = 0;
+      }
+      
+      // Return effective multiplier (1 + modifier)
+      return 1.0 + modifier;
     }
     
     return 1.0;
@@ -263,8 +271,8 @@ export class Player {
   takeDamage() {
     if (this.invulnerable || !this.isAlive) return;
     
-    this.lives--;
-    if (this.lives <= 0) {
+    this.hp--;
+    if (this.hp <= 0) {
       this.die();
     } else {
       this.invulnerable = true;

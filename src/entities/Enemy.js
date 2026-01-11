@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { GameConfig } from '../utils/GameConfig.js';
+import { GameConfig } from '../parameters/GameConfig.js';
+import { ENEMY_TYPES } from '../parameters/EnemyBehaviors.js';
 
 export class Enemy {
   constructor(game, gridX, gridY, type = 'wanderer') {
@@ -12,10 +13,15 @@ export class Enemy {
     this.x = gridX * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2;
     this.y = gridY * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2;
     
-    // Movement
-    this.speed = GameConfig.ENEMY_SPEED;
+    // Movement - base speed varies by type
+    const enemyConfig = ENEMY_TYPES[type] || ENEMY_TYPES.wanderer;
+    this.baseSpeed = enemyConfig.baseSpeed;
+    this.speed = this.baseSpeed;
     this.direction = { x: 0, y: 0 };
     this.changeDirectionTimer = 0;
+    
+    // Type-specific properties from configuration
+    this.immuneToSlowdown = enemyConfig.immuneToSlowdown;
     
     // State
     this.isAlive = true;
@@ -26,6 +32,7 @@ export class Enemy {
     
     this.createSprite();
   }
+
 
   createSprite() {
     const texture = this.game.spriteLoader.createEnemyTexture(this.type, 32);
@@ -56,10 +63,12 @@ export class Enemy {
       this.changeDirectionTimer = 1.0 + Math.random() * 2.0; // Change direction every 1-3 seconds
     }
     
-    // Move
+    // Move with tile speed modifier
     if (this.direction.x !== 0 || this.direction.y !== 0) {
-      const newX = this.x + this.direction.x * this.speed * deltaTime * 60;
-      const newY = this.y + this.direction.y * this.speed * deltaTime * 60;
+      const speedModifier = this.getTileSpeedModifier(gameScene);
+      const effectiveSpeed = this.baseSpeed * speedModifier;
+      const newX = this.x + this.direction.x * effectiveSpeed * deltaTime * 60;
+      const newY = this.y + this.direction.y * effectiveSpeed * deltaTime * 60;
       
       // Check collision separately for X and Y axes
       let moved = false;
@@ -83,6 +92,36 @@ export class Enemy {
     }
     
     this.updateSpritePosition();
+  }
+
+  /**
+   * Get speed modifier based on current tile
+   * Returns additive speed modifier (effectiveSpeed = baseSpeed * (1 + modifier))
+   * Patroller enemies are immune to negative modifiers (slowdowns)
+   */
+  getTileSpeedModifier(gameScene) {
+    if (!gameScene.currentStageData || !gameScene.currentStageData.specialTiles) {
+      return 1.0;
+    }
+    
+    // Check if current position is on a special tile
+    const specialTile = gameScene.currentStageData.specialTiles.find(
+      tile => tile.x === this.gridX && tile.y === this.gridY
+    );
+    
+    if (specialTile && specialTile.properties && specialTile.properties.speedModifier !== undefined) {
+      let modifier = specialTile.properties.speedModifier;
+      
+      // Check if enemy is immune to slowdown (negative modifiers)
+      if (this.immuneToSlowdown && modifier < 0) {
+        modifier = 0;
+      }
+      
+      // Return effective multiplier (1 + modifier)
+      return 1.0 + modifier;
+    }
+    
+    return 1.0;
   }
 
   updateDirection(gameScene) {

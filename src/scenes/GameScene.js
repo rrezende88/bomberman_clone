@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { GameConfig } from '../utils/GameConfig.js';
+import { GameConfig } from '../parameters/GameConfig.js';
 import { Player } from '../entities/Player.js';
 import { Enemy } from '../entities/Enemy.js';
 import { Bomb } from '../entities/Bomb.js';
@@ -203,25 +203,19 @@ export class GameScene {
     
     // Create visual representations for special tiles
     for (const tile of this.currentStageData.specialTiles) {
-      let color;
+      let mesh;
       
-      // Determine color based on tile type
+      // Create tile based on type
       switch (tile.type) {
         case 'sandFloor':
-          color = 0xdaa520; // Golden sand color
+          mesh = this.createSimpleColorTile(0xdaa520, 0.7); // Golden sand color
+          break;
+        case 'turboFloor':
+          mesh = this.createTurboTile();
           break;
         default:
-          color = 0xcccccc; // Default gray
+          mesh = this.createSimpleColorTile(0xcccccc, 0.7); // Default gray
       }
-      
-      // Create a plane for the tile
-      const geometry = new THREE.PlaneGeometry(GameConfig.TILE_SIZE, GameConfig.TILE_SIZE);
-      const material = new THREE.MeshBasicMaterial({ 
-        color: color,
-        transparent: true,
-        opacity: 0.7
-      });
-      const mesh = new THREE.Mesh(geometry, material);
       
       // Position the tile (convert grid position to screen position)
       const gridX = tile.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2;
@@ -234,6 +228,87 @@ export class GameScene {
       this.scene.add(mesh);
       this.specialTileSprites.push(mesh);
     }
+  }
+
+  /**
+   * Create a simple colored tile
+   */
+  createSimpleColorTile(color, opacity) {
+    const geometry = new THREE.PlaneGeometry(GameConfig.TILE_SIZE, GameConfig.TILE_SIZE);
+    const material = new THREE.MeshBasicMaterial({ 
+      color: color,
+      transparent: true,
+      opacity: opacity
+    });
+    return new THREE.Mesh(geometry, material);
+  }
+
+  /**
+   * Create a racing-style turbo boost pad with arrows
+   */
+  createTurboTile() {
+    const size = GameConfig.TILE_SIZE;
+    const canvas = document.createElement('canvas');
+    canvas.width = size * 2; // Higher resolution for cleaner arrows
+    canvas.height = size * 2;
+    const ctx = canvas.getContext('2d');
+    
+    // Scale for higher resolution
+    ctx.scale(2, 2);
+    
+    // Background - dark base with cyan glow
+    ctx.fillStyle = '#004455';
+    ctx.fillRect(0, 0, size, size);
+    
+    // Add glowing border effect
+    ctx.strokeStyle = '#00ffff';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(1, 1, size - 2, size - 2);
+    
+    // Draw chevron arrows (pointing up for boost direction)
+    const drawChevron = (yOffset, color) => {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      
+      // Left side of chevron
+      ctx.moveTo(size * 0.5, yOffset);
+      ctx.lineTo(size * 0.3, yOffset + size * 0.15);
+      ctx.lineTo(size * 0.35, yOffset + size * 0.15);
+      ctx.lineTo(size * 0.5, yOffset + size * 0.05);
+      
+      // Right side of chevron
+      ctx.lineTo(size * 0.65, yOffset + size * 0.15);
+      ctx.lineTo(size * 0.7, yOffset + size * 0.15);
+      ctx.lineTo(size * 0.5, yOffset);
+      
+      ctx.closePath();
+      ctx.fill();
+      
+      // Add highlight
+      ctx.strokeStyle = color === '#00ffff' ? '#ffffff' : '#00ffff';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    };
+    
+    // Draw three chevrons with alternating colors
+    drawChevron(size * 0.2, '#ffff00'); // Yellow
+    drawChevron(size * 0.4, '#00ffff'); // Cyan
+    drawChevron(size * 0.6, '#ffff00'); // Yellow
+    
+    // Create texture
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.magFilter = THREE.NearestFilter;
+    texture.minFilter = THREE.NearestFilter;
+    
+    // Create mesh with texture
+    const geometry = new THREE.PlaneGeometry(size, size);
+    const material = new THREE.MeshBasicMaterial({ 
+      map: texture,
+      transparent: true,
+      opacity: 0.9
+    });
+    
+    return new THREE.Mesh(geometry, material);
   }
 
   generateDefaultWalls() {
@@ -336,10 +411,11 @@ export class GameScene {
     // The game grid is now 11 rows, so we use the space above it for HUD
     const hudY = (GameConfig.GRID_HEIGHT * GameConfig.TILE_SIZE) / 2 + GameConfig.TILE_SIZE / 2 - 10;
     
-    // Health Bar (replaces Lives text)
+    // Health Bar
+    const maxHP = this.player ? this.player.character.hp : 3;
     const healthTexture = this.game.fontLoader.createHealthBarTexture(
-      this.player ? this.player.lives : GameConfig.PLAYER_LIVES,
-      GameConfig.PLAYER_LIVES,
+      this.player ? this.player.hp : maxHP,
+      maxHP,
       180,  // width
       28    // height
     );
@@ -376,8 +452,8 @@ export class GameScene {
     // Update health bar
     if (this.healthBar && this.player) {
       const healthTexture = this.game.fontLoader.createHealthBarTexture(
-        this.player.lives,
-        GameConfig.PLAYER_LIVES,
+        this.player.hp,
+        this.player.character.hp,
         180,  // width
         28    // height
       );

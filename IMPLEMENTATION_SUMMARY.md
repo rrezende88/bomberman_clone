@@ -33,7 +33,7 @@ Successfully implemented all planned improvements to enhance the Bomberman clone
 **File Modified**: `src/scenes/GameScene.js`
 
 **Features**:
-- Visual horizontal health bar replacing text-based lives display
+- Visual horizontal health bar replacing text-based HP display
 - Gradient color system:
   - Green (>60% health)
   - Yellow (30-60% health)
