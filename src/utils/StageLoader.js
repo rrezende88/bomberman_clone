@@ -50,7 +50,8 @@ export class StageLoader {
         const trimmed = line.trim();
         // Remove empty lines and comments
         return trimmed.length > 0 && !trimmed.startsWith('//');
-      });
+      })
+      .reverse();
 
     const stageData = {
       width: 0,
