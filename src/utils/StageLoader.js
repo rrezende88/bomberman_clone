@@ -1,3 +1,5 @@
+import TILE_BEHAVIORS from './TileBehaviors.js';
+
 /**
  * StageLoader - Loads and parses stage layout data from text strings
  * Handles stage data including walls, enemy spawns, and player position
@@ -57,6 +59,7 @@ export class StageLoader {
       hardWalls: [],
       softWalls: [],
       enemies: [],
+      specialTiles: [],
       grid: []
     };
 
@@ -67,15 +70,31 @@ export class StageLoader {
         const char = line[x];
         row.push(char);
 
-        switch (char) {
-          case '#':
-            // Hard wall (indestructible)
+        // Get behavior if it exists, otherwise use the character itself
+        const behavior = TILE_BEHAVIORS[char];
+        const key = behavior?.type || char;
+
+        switch (key) {
+          case 'hardWall':
             stageData.hardWalls.push({ x, y });
             break;
           
-          case '*':
-            // Soft wall (destructible)
+          case 'softWall':
             stageData.softWalls.push({ x, y });
+            break;
+          
+          case 'empty':
+            // Empty space - do nothing
+            break;
+          
+          case 'sandFloor':
+            // Special tile with behavior properties
+            stageData.specialTiles.push({ 
+              x, 
+              y, 
+              type: 'sandFloor', 
+              properties: behavior 
+            });
             break;
           
           case 'P':
@@ -95,8 +114,8 @@ export class StageLoader {
             stageData.enemies.push({ x, y, type });
             break;
           
-          case '.':
-            // Empty space - do nothing
+          default:
+            // Unknown characters are treated as empty space
             break;
         }
       }

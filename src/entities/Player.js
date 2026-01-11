@@ -186,9 +186,11 @@ export class Player {
         this.direction = 'left';
       }
       
-      // Calculate new position
-      const newX = this.x + dir.x * this.speed * deltaTime * 60;
-      const newY = this.y + dir.y * this.speed * deltaTime * 60;
+      // Calculate new position with tile speed modifier
+      const speedModifier = this.getTileSpeedModifier(gameScene);
+      const effectiveSpeed = this.speed * speedModifier;
+      const newX = this.x + dir.x * effectiveSpeed * deltaTime * 60;
+      const newY = this.y + dir.y * effectiveSpeed * deltaTime * 60;
       
       // Check collision separately for X and Y axes
       if (!gameScene.collisionSystem.checkCollision(newX, this.y, this)) {
@@ -212,6 +214,28 @@ export class Player {
     this.updateAnimation(deltaTime);
     
     this.updateSpritePosition();
+  }
+
+  /**
+   * Get speed modifier based on current tile
+   * Returns speedModifier from tile properties if on a special tile, otherwise 1.0
+   * This method can be copied to Enemy.js for future implementation
+   */
+  getTileSpeedModifier(gameScene) {
+    if (!gameScene.currentStageData || !gameScene.currentStageData.specialTiles) {
+      return 1.0;
+    }
+    
+    // Check if current position is on a special tile
+    const specialTile = gameScene.currentStageData.specialTiles.find(
+      tile => tile.x === this.gridX && tile.y === this.gridY
+    );
+    
+    if (specialTile && specialTile.properties && specialTile.properties.speedModifier !== undefined) {
+      return specialTile.properties.speedModifier;
+    }
+    
+    return 1.0;
   }
 
   canPlaceBomb() {
