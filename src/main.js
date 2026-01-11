@@ -3,7 +3,7 @@ import { SceneManager } from './utils/SceneManager.js';
 import { SpriteLoader } from './utils/SpriteLoader.js';
 import { FontLoader } from './utils/FontLoader.js';
 import { InputManager } from './systems/InputManager.js';
-import { GameConfig } from './utils/GameConfig.js';
+import { GameConfig } from './parameters/GameConfig.js';
 import { MainMenuScene } from './scenes/MainMenuScene.js';
 import { CharacterSelectScene } from './scenes/CharacterSelectScene.js';
 import { StageSelectScene } from './scenes/StageSelectScene.js';

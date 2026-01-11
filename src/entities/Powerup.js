@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { GameConfig } from '../utils/GameConfig.js';
+import { GameConfig } from '../parameters/GameConfig.js';
 
 export class Powerup {
   constructor(game, gridX, gridY, type) {

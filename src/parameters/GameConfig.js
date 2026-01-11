@@ -1,4 +1,7 @@
 // Game configuration constants
+import { CHARACTERS } from './CharacterBehaviors.js';
+import { ENEMY_COUNT } from './EnemyBehaviors.js';
+
 export const GameConfig = {
   // Grid settings
   GRID_WIDTH: 21,
@@ -7,7 +10,6 @@ export const GameConfig = {
   
   // Player settings
   PLAYER_SPEED: 2.5,
-  PLAYER_LIVES: 3,
   PLAYER_MAX_BOMBS: 1,
   PLAYER_BOMB_RANGE: 1,
   
@@ -19,20 +21,14 @@ export const GameConfig = {
   POWERUP_LIFETIME: 10000,
   POWERUP_DROP_CHANCE: 0.3,
   
-  // Enemy settings
-  ENEMY_SPEED: 1.5,
-  ENEMY_COUNT: 5,
+  // Enemy settings (base speeds now defined per enemy type in EnemyBehaviors.js)
+  ENEMY_COUNT,
   
   // Game timer
   GAME_TIME: 180, // seconds
   
-  // Characters
-  CHARACTERS: [
-    { id: 0, name: 'Red Bomber', color: 0xff3333, speed: 2.5, bombs: 1 },
-    { id: 1, name: 'Blue Bomber', color: 0x3333ff, speed: 3.0, bombs: 1 },
-    { id: 2, name: 'Green Bomber', color: 0x33ff33, speed: 2.0, bombs: 2 },
-    { id: 3, name: 'Yellow Bomber', color: 0xffff33, speed: 2.5, bombs: 1 },
-  ],
+  // Characters (imported from CharacterBehaviors.js)
+  CHARACTERS,
   
   // Stages
   STAGES: [

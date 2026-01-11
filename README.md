@@ -182,7 +182,7 @@ Each character has unique starting stats:
 - Reach the exit door to complete the stage
 
 **Lose Conditions:**
-- Player loses all lives (3 lives total)
+- Player loses all HP (varies by character: 2-4 HP)
 - Time runs out (180 seconds)
 
 **Scoring:**

@@ -10,7 +10,9 @@
  *   - type: string identifier for the tile type
  *   - collision: whether entities collide with this tile
  *   - destructible: whether explosions can destroy this tile
- *   - speedModifier: optional speed multiplier for entities on this tile (1.0 = normal)
+ *   - speedModifier: optional additive speed modifier (effectiveSpeed = baseSpeed * (1 + modifier))
+ *     - Negative values slow down (e.g., -0.5 = 50% speed)
+ *     - Positive values speed up (e.g., 0.5 = 150% speed)
  *   - description: human-readable description
  */
 const TILE_BEHAVIORS = {
@@ -39,8 +41,16 @@ const TILE_BEHAVIORS = {
     type: 'sandFloor',
     collision: false,
     destructible: false,
-    speedModifier: 0.5,
+    speedModifier: -0.5,
     description: 'Sand floor (reduces movement speed)'
+  },
+  
+  'T': {
+    type: 'turboFloor',
+    collision: false,
+    destructible: false,
+    speedModifier: 0.5,
+    description: 'Turbo pad (increases movement speed)'
   }
 };
 

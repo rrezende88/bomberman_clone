@@ -1,4 +1,4 @@
-import TILE_BEHAVIORS from './TileBehaviors.js';
+import TILE_BEHAVIORS from '../parameters/TileBehaviors.js';
 
 /**
  * StageLoader - Loads and parses stage layout data from text strings
@@ -93,6 +93,16 @@ export class StageLoader {
               x, 
               y, 
               type: 'sandFloor', 
+              properties: behavior 
+            });
+            break;
+          
+          case 'turboFloor':
+            // Turbo tile with speed boost properties
+            stageData.specialTiles.push({ 
+              x, 
+              y, 
+              type: 'turboFloor', 
               properties: behavior 
             });
             break;

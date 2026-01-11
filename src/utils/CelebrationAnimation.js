@@ -1,4 +1,4 @@
-import { GameConfig } from './GameConfig.js';
+import { GameConfig } from '../parameters/GameConfig.js';
 
 /**
  * Reusable celebration animation for character sprites
