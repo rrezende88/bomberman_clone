@@ -2,6 +2,11 @@ import * as THREE from 'three';
 import { GameConfig } from '../parameters/GameConfig.js';
 
 export class Player {
+  // Static limits for player stats
+  static MAX_BOMBS = 4;
+  static MAX_BOMB_RANGE = 5;
+  static MAX_SPEED = 5;
+
   constructor(game, gridX, gridY, character) {
     this.game = game;
     this.gridX = gridX;
@@ -287,18 +292,28 @@ export class Player {
     }
   }
 
-  collectPowerup(type) {
-    switch (type) {
-      case 'bomb':
-        this.maxBombs++;
-        break;
-      case 'fire':
-        this.bombRange++;
-        break;
-      case 'speed':
-        this.speed += 0.5;
-        break;
-    }
+  /**
+   * Increase bomb capacity up to the maximum limit
+   * @param {number} amount - Amount to increase (default 1)
+   */
+  addBombCapacity(amount = 1) {
+    this.maxBombs = Math.min(this.maxBombs + amount, Player.MAX_BOMBS);
+  }
+
+  /**
+   * Increase bomb explosion range up to the maximum limit
+   * @param {number} amount - Amount to increase (default 1)
+   */
+  addBombRange(amount = 1) {
+    this.bombRange = Math.min(this.bombRange + amount, Player.MAX_BOMB_RANGE);
+  }
+
+  /**
+   * Increase movement speed up to the maximum limit
+   * @param {number} amount - Amount to increase (default 0.5)
+   */
+  addSpeed(amount = 0.5) {
+    this.speed = Math.min(this.speed + amount, Player.MAX_SPEED);
   }
 
   getSprite() {

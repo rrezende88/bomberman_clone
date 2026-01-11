@@ -68,7 +68,19 @@ export class Powerup {
     if (this.isCollected) return;
     
     this.isCollected = true;
-    player.collectPowerup(this.type);
+    
+    // Apply specific benefit based on type
+    switch (this.type) {
+      case 'bomb':
+        player.addBombCapacity(1);
+        break;
+      case 'fire':
+        player.addBombRange(1);
+        break;
+      case 'speed':
+        player.addSpeed(0.5);
+        break;
+    }
     
     if (this.sprite) {
       this.sprite.visible = false;

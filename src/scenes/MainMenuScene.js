@@ -28,15 +28,12 @@ export class MainMenuScene {
       this.menuItems.push(textMesh);
     });
     
-    // Create info section for selected option (moved down to avoid overlap)
-    this.infoText = this.createText('', 0, -200, 32, 0xaaaaaa, { scaleX: 700, scaleY: 80 });
-    
     // Create gamepad hint if connected
-    this.gamepadHint = this.createText('', 0, -240, 28, 0xaaaaaa, { scaleX: 600, scaleY: 70 });
+    this.gamepadHint = this.createText('', 0, -180, 28, 0xaaaaaa, { scaleX: 900, scaleY: 100 });
     
     // Create copyright/controls text (moved down further)
-    this.createText('Arrow Keys / WASD - Navigate', 0, -270, 24, 0x888888, { scaleX: 600, scaleY: 60 });
-    this.createText('Enter / Space - Select', 0, -295, 24, 0x888888, { scaleX: 600, scaleY: 60 });
+    this.createText('Arrow Keys / WASD - Navigate', 0, -210, 24, 0x888888, { scaleX: 700, scaleY: 80 });
+    this.createText('Enter / Space - Select', 0, -235, 24, 0x888888, { scaleX: 700, scaleY: 80 });
   }
 
   createText(text, x, y, size, color, options = {}) {
@@ -47,13 +44,6 @@ export class MainMenuScene {
   }
 
   updateMenuHighlight() {
-    // Descriptions for each menu option
-    const descriptions = [
-      'Begin your bombing adventure!',
-      'View control scheme & gamepad setup',
-      'Close the game'
-    ];
-    
     this.menuItems.forEach((item, index) => {
       const isSelected = index === this.selectedOption;
       const color = isSelected ? 0x00ff00 : 0xffffff;
@@ -61,16 +51,6 @@ export class MainMenuScene {
       
       this.game.fontLoader.updateTextSprite(item, text, 42, color);
     });
-    
-    // Update info text with description of selected option
-    if (this.infoText) {
-      this.game.fontLoader.updateTextSprite(
-        this.infoText, 
-        descriptions[this.selectedOption], 
-        32, 
-        0xaaaaaa
-      );
-    }
   }
 
   onEnter() {
