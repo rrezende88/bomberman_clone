@@ -42,7 +42,7 @@ export class CharacterSelectScene {
       try {
         // Load sprite sheet for this character
         const colorName = char.name.split(' ')[0].toLowerCase();
-        const spritePath = `/sprites/player_${colorName}.png`;
+        const spritePath = `./sprites/player_${colorName}.png`;
         const spriteSheet = await this.game.spriteLoader.loadSpriteSheet(spritePath);
         
         // Create sprite showing idle frame facing down
