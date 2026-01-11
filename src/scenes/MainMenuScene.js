@@ -31,6 +31,10 @@ export class MainMenuScene {
     // Create gamepad hint if connected
     this.gamepadHint = this.createText('', 0, -180, 28, 0xaaaaaa, { scaleX: 900, scaleY: 100 });
     
+    // Create orientation hint for touch devices (initially hidden)
+    this.orientationHint = this.createText('', 0, -260, 26, 0xffaa00, { scaleX: 800, scaleY: 70 });
+    this.orientationHint.visible = false;
+    
     // Create copyright/controls text (moved down further)
     this.createText('Arrow Keys / WASD - Navigate', 0, -210, 24, 0x888888, { scaleX: 700, scaleY: 80 });
     this.createText('Enter / Space - Select', 0, -235, 24, 0x888888, { scaleX: 700, scaleY: 80 });
@@ -75,6 +79,21 @@ export class MainMenuScene {
       if (this.gamepadHint.userData.text !== text) {
         this.gamepadHint.userData.text = text;
         this.game.fontLoader.updateTextSprite(this.gamepadHint, text, 28, 0xaaaaaa);
+      }
+    }
+    
+    // Update orientation hint for touch devices
+    if (this.orientationHint) {
+      const isTouchDevice = input.isTouchDevice();
+      const isLandscape = window.innerWidth > window.innerHeight;
+      const shouldShowHint = isTouchDevice && isLandscape;
+      
+      if (shouldShowHint && !this.orientationHint.visible) {
+        this.orientationHint.visible = true;
+        const text = 'Rotate to portrait for better experience';
+        this.game.fontLoader.updateTextSprite(this.orientationHint, text, 26, 0xffaa00);
+      } else if (!shouldShowHint && this.orientationHint.visible) {
+        this.orientationHint.visible = false;
       }
     }
     

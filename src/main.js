@@ -4,6 +4,7 @@ import { SpriteLoader } from './utils/SpriteLoader.js';
 import { FontLoader } from './utils/FontLoader.js';
 import { InputManager } from './systems/InputManager.js';
 import { PowerupDropSystem } from './systems/PowerupDropSystem.js';
+import { TouchUI } from './utils/TouchUI.js';
 import { GameConfig } from './parameters/GameConfig.js';
 import { MainMenuScene } from './scenes/MainMenuScene.js';
 import { CharacterSelectScene } from './scenes/CharacterSelectScene.js';
@@ -44,6 +45,9 @@ class Game {
     this.inputManager = new InputManager();
     this.powerupDropSystem = new PowerupDropSystem();
     this.sceneManager = new SceneManager();
+    
+    // Initialize touch UI if on touch device
+    this.touchUI = new TouchUI(this.inputManager.getTouchController());
 
     // Wait for font to load
     console.log('Loading Capcom-style arcade font...');
