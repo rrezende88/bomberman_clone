@@ -1,6 +1,7 @@
 // Game configuration constants
 import { CHARACTERS } from './CharacterBehaviors.js';
 import { ENEMY_COUNT } from './EnemyBehaviors.js';
+import { STAGES } from './StageBehaviors.js';
 
 export const GameConfig = {
   // Grid settings
@@ -30,88 +31,8 @@ export const GameConfig = {
   // Characters (imported from CharacterBehaviors.js)
   CHARACTERS,
   
-  // Stages
-  STAGES: [
-    { 
-      id: 0, 
-      name: 'Classic Arena',
-      description: 'Traditional Bomberman grid',
-      theme: 'classic'
-    },
-    { 
-      id: 1, 
-      name: 'Grassland Fields',
-      description: 'Green meadows and fresh air',
-      theme: 'grassland'
-    },
-    { 
-      id: 2, 
-      name: 'Desert Dunes',
-      description: 'Hot sandy wasteland',
-      theme: 'desert'
-    },
-    { 
-      id: 3, 
-      name: 'Sunny Beach',
-      description: 'Tropical paradise',
-      theme: 'beach'
-    },
-    { 
-      id: 4, 
-      name: 'City Roads',
-      description: 'Urban asphalt jungle',
-      theme: 'roads'
-    },
-    { 
-      id: 5, 
-      name: 'Water World',
-      description: 'Deep blue waters',
-      theme: 'water'
-    },
-    { 
-      id: 6, 
-      name: 'Dark Forest',
-      description: 'Mysterious woods',
-      theme: 'forest'
-    },
-    { 
-      id: 7, 
-      name: 'Toxic Zone',
-      description: 'Poisonous hazard area',
-      theme: 'poison'
-    },
-    { 
-      id: 8, 
-      name: 'Frozen Tundra',
-      description: 'Icy cold wasteland',
-      theme: 'ice'
-    },
-    { 
-      id: 9, 
-      name: 'Power Plant',
-      description: 'Industrial energy facility',
-      theme: 'powerplant'
-    },
-    { 
-      id: 10, 
-      name: 'Midnight Manor',
-      description: 'Dark night realm',
-      theme: 'night'
-    },
-    { 
-      id: 11, 
-      name: 'Dungeon Fortress',
-      description: 'Dark dungeon with narrow corridors',
-      theme: 'dungeon'
-    },
-  ],
-  
-  // Weather effects mapping (theme -> effect type)
-  WEATHER_EFFECTS: {
-    'ice': 'snow',
-    'water': 'rain',
-    'grassland': 'flower',
-  },
+  // Stages (imported from StageBehaviors.js)
+  STAGES,
   
   // Rendering
   CAMERA_ZOOM: 1,

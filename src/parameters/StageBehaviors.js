@@ -1,8 +1,8 @@
 /**
- * Stage layout definitions
- * Each stage is a string with 21x11 grid
+ * Stage layout definitions and metadata
+ * Each stage is an object with map and theme
  * 
- * Symbols:
+ * Map Symbols:
  * # = Hard wall (indestructible)
  * * = Soft wall (destructible)
  * . = Empty space
@@ -12,7 +12,7 @@
  * 3 = Patroller enemy
  */
 
-export const STAGE_1 = 
+const STAGE_1_MAP = 
 `#####################
 #P..*.*..*..*...1...#
 #.#.#.#.#.#.#.#.#.#.#
@@ -25,7 +25,7 @@ export const STAGE_1 =
 #.*..*.*..*..*.*....#
 #####################`;
 
-export const STAGE_2 = `#####################
+const STAGE_2_MAP = `#####################
 #P..*.....*......1..#
 #.#.#.#.#.#.#.#.#.#.#
 #..*.*..*.*..*..*...#
@@ -37,7 +37,7 @@ export const STAGE_2 = `#####################
 #*..*.*....*..*..**.#
 #####################`;
 
-export const STAGE_3 = `#####################
+const STAGE_3_MAP = `#####################
 #PSS................#
 #.#.#.#.#.#.#.#.#.#.#
 #..***..***..***....#
@@ -49,7 +49,7 @@ export const STAGE_3 = `#####################
 #.....***.***.......#
 #####################`;
 
-export const STAGE_4 = `#####################
+const STAGE_4_MAP = `#####################
 #P..*...*...*...1...#
 #.#.#.#.#.#.#.#.#.#.#
 #..*...*...*...*.**.#
@@ -61,7 +61,7 @@ export const STAGE_4 = `#####################
 #*...*...*...*..*...#
 #####################`;
 
-export const STAGE_5 = `#####################
+const STAGE_5_MAP = `#####################
 #P.T...............1#
 #.#####.#####.#####.#
 #..T..*.*.T...*..*..#
@@ -73,7 +73,7 @@ export const STAGE_5 = `#####################
 #.*...*.*.....*..T.##
 #####################`;
 
-export const STAGE_6 = `#####################
+const STAGE_6_MAP = `#####################
 #P.*....*....*....1.#
 #.#.#.#.#.#.#.#.#.#.#
 #...*....*....*....##
@@ -85,7 +85,7 @@ export const STAGE_6 = `#####################
 #.*....*....*...*...#
 #####################`;
 
-export const STAGE_7 = `#####################
+const STAGE_7_MAP = `#####################
 #P*.*****.*****.**.##
 #.#*#*#*#*#*#*#*#*#.#
 #***.*..*..*..**.*.*#
@@ -97,7 +97,7 @@ export const STAGE_7 = `#####################
 #..***..*..***.*.*.*#
 #####################`;
 
-export const STAGE_8 = `#####################
+const STAGE_8_MAP = `#####################
 #P***.*..*..***.*1*.#
 #*#.#*#*#.#*#.#*#*#*#
 #.*.**.*.*.*.***.*.*#
@@ -109,7 +109,7 @@ export const STAGE_8 = `#####################
 #.***.*..*...**..**.#
 #####################`;
 
-export const STAGE_9 = `#####################
+const STAGE_9_MAP = `#####################
 #P..*......*....1...#
 #.#.#.#.#.#.#.#.#.#.#
 #..*..***..***..*.*.#
@@ -121,7 +121,7 @@ export const STAGE_9 = `#####################
 #..**..***..***..**.#
 #####################`;
 
-export const STAGE_10 = `#####################
+const STAGE_10_MAP = `#####################
 #P.*#*#*#*#*#*#*#.1.#
 #.#.#.#.#.#.#.#.#.#.#
 #.*#*.*.*.*.*.*#*...#
@@ -133,7 +133,7 @@ export const STAGE_10 = `#####################
 #.*#*#*#*#*#*#*#*...#
 #####################`;
 
-export const STAGE_11 = `#####################
+const STAGE_11_MAP = `#####################
 #P..*..***..*..*..1.#
 #.#.#.#*#*#.#.#.#.#.#
 #..*..*.*..*...*....#
@@ -145,7 +145,7 @@ export const STAGE_11 = `#####################
 #..*..****.***..*.*.#
 #####################`;
 
-export const STAGE_12 = `#####################
+const STAGE_12_MAP = `#####################
 #P................1.#
 #*#*#**#########*#*##
 #.*..*.........*..*.#
@@ -158,7 +158,90 @@ export const STAGE_12 = `#####################
 #####################`;
 
 // Export array for easy access by index
+// Each stage contains map, theme, and metadata
 export const STAGES = [
-  STAGE_1, STAGE_2, STAGE_3, STAGE_4, STAGE_5, STAGE_6,
-  STAGE_7, STAGE_8, STAGE_9, STAGE_10, STAGE_11, STAGE_12
+  { 
+    id: 0,
+    name: 'Classic Arena',
+    description: 'Traditional Bomberman grid',
+    theme: 'classic',
+    map: STAGE_1_MAP
+  },
+  { 
+    id: 1,
+    name: 'Grassland Fields',
+    description: 'Green meadows and fresh air',
+    theme: 'grassland',
+    map: STAGE_2_MAP
+  },
+  { 
+    id: 2,
+    name: 'Desert Dunes',
+    description: 'Hot sandy wasteland',
+    theme: 'desert',
+    map: STAGE_3_MAP
+  },
+  { 
+    id: 3,
+    name: 'Sunny Beach',
+    description: 'Tropical paradise',
+    theme: 'beach',
+    map: STAGE_4_MAP
+  },
+  { 
+    id: 4,
+    name: 'City Roads',
+    description: 'Urban asphalt jungle',
+    theme: 'roads',
+    map: STAGE_5_MAP
+  },
+  { 
+    id: 5,
+    name: 'Water World',
+    description: 'Deep blue waters',
+    theme: 'water',
+    map: STAGE_6_MAP
+  },
+  { 
+    id: 6,
+    name: 'Dark Forest',
+    description: 'Mysterious woods',
+    theme: 'forest',
+    map: STAGE_7_MAP
+  },
+  { 
+    id: 7,
+    name: 'Toxic Zone',
+    description: 'Poisonous hazard area',
+    theme: 'poison',
+    map: STAGE_8_MAP
+  },
+  { 
+    id: 8,
+    name: 'Frozen Tundra',
+    description: 'Icy cold wasteland',
+    theme: 'ice',
+    map: STAGE_9_MAP
+  },
+  { 
+    id: 9,
+    name: 'Power Plant',
+    description: 'Industrial energy facility',
+    theme: 'powerplant',
+    map: STAGE_10_MAP
+  },
+  { 
+    id: 10,
+    name: 'Midnight Manor',
+    description: 'Dark night realm',
+    theme: 'night',
+    map: STAGE_11_MAP
+  },
+  { 
+    id: 11,
+    name: 'Dungeon Fortress',
+    description: 'Dark dungeon with narrow corridors',
+    theme: 'dungeon',
+    map: STAGE_12_MAP
+  },
 ];

@@ -13,7 +13,8 @@ import { CelebrationAnimation } from '../utils/CelebrationAnimation.js';
 import { SnowEffect } from '../effects/weather/SnowEffect.js';
 import { RainEffect } from '../effects/weather/RainEffect.js';
 import { FlowerEffect } from '../effects/weather/FlowerEffect.js';
-import { STAGES } from '../data/stages.js';
+import { STAGES } from '../parameters/StageBehaviors.js';
+import { THEMES } from '../parameters/ThemeBehaviors.js';
 
 export class GameScene {
   constructor(game) {
@@ -73,59 +74,17 @@ export class GameScene {
       this.scene.remove(this.floor);
     }
 
-    // Create floor grid based on theme
-    let floorTexture;
-    let backgroundColor;
+    // Get theme configuration
+    const themeConfig = THEMES[this.currentTheme] || THEMES['classic'];
     
-    switch (this.currentTheme) {
-      case 'grassland':
-        floorTexture = this.game.spriteLoader.createGrasslandFloorTexture(GameConfig.TILE_SIZE);
-        backgroundColor = new THREE.Color(0x6ab04c); // Green
-        break;
-      case 'desert':
-        floorTexture = this.game.spriteLoader.createDesertFloorTexture(GameConfig.TILE_SIZE);
-        backgroundColor = new THREE.Color(0xf0c674); // Sandy yellow
-        break;
-      case 'beach':
-        floorTexture = this.game.spriteLoader.createBeachFloorTexture(GameConfig.TILE_SIZE);
-        backgroundColor = new THREE.Color(0x87ceeb); // Sky blue
-        break;
-      case 'roads':
-        floorTexture = this.game.spriteLoader.createRoadsFloorTexture(GameConfig.TILE_SIZE);
-        backgroundColor = new THREE.Color(0x2a2a2a); // Dark gray
-        break;
-      case 'water':
-        floorTexture = this.game.spriteLoader.createWaterFloorTexture(GameConfig.TILE_SIZE);
-        backgroundColor = new THREE.Color(0x0077be); // Deep blue
-        break;
-      case 'forest':
-        floorTexture = this.game.spriteLoader.createForestFloorTexture(GameConfig.TILE_SIZE);
-        backgroundColor = new THREE.Color(0x1a3a1a); // Dark green
-        break;
-      case 'poison':
-        floorTexture = this.game.spriteLoader.createPoisonFloorTexture(GameConfig.TILE_SIZE);
-        backgroundColor = new THREE.Color(0x6b8e23); // Toxic green
-        break;
-      case 'ice':
-        floorTexture = this.game.spriteLoader.createIceFloorTexture(GameConfig.TILE_SIZE);
-        backgroundColor = new THREE.Color(0xd0e8f0); // Icy blue
-        break;
-      case 'powerplant':
-        floorTexture = this.game.spriteLoader.createPowerplantFloorTexture(GameConfig.TILE_SIZE);
-        backgroundColor = new THREE.Color(0x1a1a1a); // Industrial black
-        break;
-      case 'night':
-        floorTexture = this.game.spriteLoader.createNightFloorTexture(GameConfig.TILE_SIZE);
-        backgroundColor = new THREE.Color(0x0a0a1e); // Dark night
-        break;
-      case 'dungeon':
-        floorTexture = this.game.spriteLoader.createDungeonFloorTexture(GameConfig.TILE_SIZE);
-        backgroundColor = new THREE.Color(0x3a2f25); // Warm brown
-        break;
-      default: // classic
-        floorTexture = this.game.spriteLoader.createFloorTexture(GameConfig.TILE_SIZE);
-        backgroundColor = new THREE.Color(0x2a4a2a); // Classic green
-    }
+    // Create floor texture with theme parameters
+    const floorTexture = this.game.spriteLoader.createFloorTexture(
+      themeConfig.floorTexture,
+      GameConfig.TILE_SIZE
+    );
+    
+    // Get background color
+    const backgroundColor = new THREE.Color(themeConfig.backgroundColor);
     
     this.scene.background = backgroundColor;
     floorTexture.repeat.set(GameConfig.GRID_WIDTH, GameConfig.GRID_HEIGHT);
@@ -147,8 +106,11 @@ export class GameScene {
       this.weatherEffect = null;
     }
     
+    // Get theme configuration
+    const themeConfig = THEMES[this.currentTheme] || THEMES['classic'];
+    
     // Check if current theme has a weather effect
-    const effectType = GameConfig.WEATHER_EFFECTS[this.currentTheme];
+    const effectType = themeConfig.weatherEffect;
     
     if (!effectType) {
       return; // No weather effect for this theme
@@ -183,9 +145,9 @@ export class GameScene {
     }
     this.specialTileSprites = [];
     
-    // Determine stage theme from GameConfig
-    const stageConfig = GameConfig.STAGES[stageId];
-    this.currentTheme = stageConfig ? stageConfig.theme : 'classic';
+    // Get stage configuration
+    const stageConfig = STAGES[stageId] || STAGES[0];
+    this.currentTheme = stageConfig.theme;
     
     // Update floor based on theme
     this.updateFloor();
@@ -195,7 +157,7 @@ export class GameScene {
     
     // Load stage data from imported constants
     try {
-      const stageText = STAGES[stageId] || STAGES[0];
+      const stageText = stageConfig.map;
       this.currentStageData = this.stageLoader.loadStage(stageText, `stage_${stageId}`);
       
       // Validate stage dimensions
@@ -522,7 +484,7 @@ export class GameScene {
     
     // Initialize game
     const character = this.game.selectedCharacter || GameConfig.CHARACTERS[0];
-    const stage = this.game.selectedStage || GameConfig.STAGES[0];
+    const stage = this.game.selectedStage || STAGES[0];
     
     this.gameTime = GameConfig.GAME_TIME;
     this.score = 0;
