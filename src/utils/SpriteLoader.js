@@ -224,23 +224,163 @@ export class SpriteLoader {
     return texture;
   }
 
-  // Create floor texture
-  createFloorTexture(size = 32) {
+  // Create floor texture with theme parameters
+  createFloorTexture(config, size = 32) {
     const canvas = document.createElement('canvas');
     canvas.width = size;
     canvas.height = size;
     const ctx = canvas.getContext('2d');
     
-    // Checkerboard pattern
-    const light = '#90EE90';
-    const dark = '#7BC87B';
-    
-    ctx.fillStyle = light;
+    // Base color
+    ctx.fillStyle = config.baseColor || '#90EE90';
     ctx.fillRect(0, 0, size, size);
     
-    ctx.fillStyle = dark;
-    ctx.fillRect(size / 2, 0, size / 2, size / 2);
-    ctx.fillRect(0, size / 2, size / 2, size / 2);
+    // Pattern type handling (can have multiple patterns)
+    if (config.pattern === 'checkerboard' && config.patternColor) {
+      ctx.fillStyle = config.patternColor;
+      ctx.fillRect(size / 2, 0, size / 2, size / 2);
+      ctx.fillRect(0, size / 2, size / 2, size / 2);
+    }
+    
+    if ((config.pattern === 'patches' || config.patchPattern === 'patches') && config.patches) {
+      // Draw patches
+      config.patches.forEach(patch => {
+        ctx.fillStyle = patch.color;
+        if (patch.type === 'rect') {
+          ctx.fillRect(patch.x, patch.y, patch.width, patch.height);
+        } else if (patch.type === 'circle') {
+          ctx.beginPath();
+          ctx.arc(patch.x, patch.y, patch.radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
+    }
+    
+    if ((config.pattern === 'ripples' || config.ripplePattern === 'ripples') && config.rippleColor) {
+      // Draw ripples
+      ctx.strokeStyle = config.rippleColor;
+      ctx.lineWidth = config.rippleWidth || 1;
+      const rippleCount = config.rippleCount || 4;
+      for (let i = 0; i < rippleCount; i++) {
+        ctx.beginPath();
+        ctx.moveTo(0, i * (size / rippleCount) + (size / rippleCount) / 2);
+        ctx.lineTo(size, i * (size / rippleCount) + (size / rippleCount) / 2 + 1);
+        ctx.stroke();
+      }
+    }
+    
+    if ((config.pattern === 'arcs' || config.arcPattern === 'arcs') && config.arcColor) {
+      // Draw arcs (for water)
+      ctx.strokeStyle = config.arcColor;
+      ctx.lineWidth = config.arcWidth || 1;
+      if (config.arcs) {
+        config.arcs.forEach(arc => {
+          ctx.beginPath();
+          ctx.arc(arc.x, arc.y, arc.radius, arc.startAngle || 0, arc.endAngle || Math.PI * 2);
+          ctx.stroke();
+        });
+      }
+    }
+    
+    if (config.pattern === 'lines' && config.lineColor) {
+      // Draw lines (for roads)
+      ctx.strokeStyle = config.lineColor;
+      ctx.lineWidth = config.lineWidth || 1;
+      if (config.lines) {
+        config.lines.forEach(line => {
+          ctx.beginPath();
+          ctx.moveTo(line.x1, line.y1);
+          ctx.lineTo(line.x2, line.y2);
+          ctx.stroke();
+        });
+      }
+      // Draw filled rectangles (for road markings)
+      if (config.fillRects) {
+        config.fillRects.forEach(rect => {
+          ctx.fillStyle = rect.color;
+          ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+        });
+      }
+    }
+    
+    if ((config.pattern === 'stars' || config.starPattern === 'stars') && config.stars) {
+      // Draw stars (for night)
+      ctx.fillStyle = config.starColor || '#ffffff';
+      config.stars.forEach(star => {
+        ctx.fillRect(star.x, star.y, star.size || 2, star.size || 2);
+      });
+    }
+    
+    if ((config.pattern === 'frost' || config.frostPattern === 'frost') && config.frostColor) {
+      // Draw frost patterns (for ice)
+      ctx.strokeStyle = config.frostColor;
+      ctx.lineWidth = config.frostWidth || 1;
+      if (config.frostLines) {
+        config.frostLines.forEach(line => {
+          ctx.beginPath();
+          ctx.moveTo(line.x1, line.y1);
+          ctx.lineTo(line.x2, line.y2);
+          ctx.stroke();
+        });
+      }
+    }
+    
+    if ((config.pattern === 'bubbles' || config.bubblePattern === 'bubbles') && config.bubbles) {
+      // Draw bubbles (for poison)
+      config.bubbles.forEach(bubble => {
+        ctx.fillStyle = bubble.color || 'rgba(139, 255, 0, 0.5)';
+        ctx.beginPath();
+        ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+    
+    if ((config.pattern === 'stripes' || config.stripePattern === 'stripes') && config.stripes) {
+      // Draw stripes (for powerplant)
+      config.stripes.forEach(stripe => {
+        ctx.fillStyle = stripe.color;
+        ctx.fillRect(stripe.x, stripe.y, stripe.width, stripe.height);
+      });
+    }
+    
+    if ((config.pattern === 'gradient' || config.gradientPattern === 'gradient') && config.gradient) {
+      // Draw gradient (for night glow)
+      const grad = ctx.createRadialGradient(
+        config.gradient.x, config.gradient.y, config.gradient.r1,
+        config.gradient.x, config.gradient.y, config.gradient.r2
+      );
+      config.gradient.stops.forEach(stop => {
+        grad.addColorStop(stop.position, stop.color);
+      });
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, size, size);
+    }
+    
+    // Additional details (like grass blades, cracks, etc.)
+    if (config.details) {
+      config.details.forEach(detail => {
+        if (detail.type === 'stroke') {
+          ctx.strokeStyle = detail.color;
+          ctx.lineWidth = detail.width || 1;
+          ctx.beginPath();
+          if (detail.path) {
+            detail.path.forEach((point, index) => {
+              if (index === 0) {
+                ctx.moveTo(point.x, point.y);
+              } else {
+                ctx.lineTo(point.x, point.y);
+              }
+            });
+          }
+          ctx.stroke();
+        } else if (detail.type === 'fill') {
+          ctx.fillStyle = detail.color;
+          if (detail.rect) {
+            ctx.fillRect(detail.rect.x, detail.rect.y, detail.rect.width, detail.rect.height);
+          }
+        }
+      });
+    }
     
     const texture = new THREE.CanvasTexture(canvas);
     texture.magFilter = THREE.NearestFilter;
